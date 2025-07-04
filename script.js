@@ -1,71 +1,125 @@
-//3 main objects here, GameBoard, Cell, and GamePlay
+//
 function GameBoard(){
-    const board=[];
+    let board=[];
     const n=3;
-    
-    const getBoard= () => {     //uses closure to print the board
-        console.log(board);
-        return board;
-    }; 
-
     for(let i=0; i<n; i++)
     {
         board[i]=[];
         for(let j=0; j<n; j++)
         {
-            board[i].push(Cell());
+            board[i].push(Player());
         }
     }
-    
-    const printBoard= (board) => {
-        board.forEach(cell => {
-            console.log(cell);
-        })
-    };
 
-    const playMove=() => {
-        
+    const getBoard= () => (board);
+
+    const printBoard= () => {
+        console.log(board);
     }
 
-    return {getBoard, printBoard, playMove};
-} 
+    const markMove= (symbol, playerID, moveRow, moveCol) => {
+        //let's just work on controller first
+        const position=board[moveRow][moveCol];
+        position.symbol=symbol;
+        position.setPlayer(playerID);
+    };
 
-//cell can have 3 values, 0 mean empty, 1 means p1, 2 means p2.
-//it has properties like player, move
-function Cell(){
-    const player=0;
-    const move="";
-    return {player, move};
+    const checkWin= (currentPlayer) => {
+        let winner=" ";
+        //checking for rows
+        for(let row=0; row<n; row++)
+        {
+            if(
+                board[row][0].symbol === board[row][1].symbol &&
+                board[row][1].symbol === board[row][2].symbol &&
+                board[row][0].symbol!= " "
+            ){
+                winner= currentPlayer;
+            }
+        }
+        
+        //checking for columns
+        for(let col=0; col<n; col++)
+        {
+            if(
+                board[0][col].symbol === board[1][col].symbol&&
+                board[1][col].symbol=== board[2][col].symbol &&
+                board[0][col].symbol != " "
+            ){
+                winner= currentPlayer;
+            }
+        }
+
+        return winner;
+    };
+
+    return {getBoard, printBoard, markMove, checkWin};
 }
 
+function Player(){
+    //default player is noone, 1- p1's move and 2- p2's move.
+    let value=0;
+    
+    const setPlayer= (playerID) => {
+        value= playerID;
+    }
 
-function GamePlay(){
-    const board=GameBoard();
-    const p1="player 1";
-    const p2="player 2";
+    const symbol= (value) => {
+        if(value === 0){
+            return " ";
+        }
+        else if(value === 1) return "o";
+        else return "x";
+    }
+    return {value, symbol, setPlayer};
+}
 
-    const players=[
+function GameController(){
+    const board= GameBoard();
+
+    const playerList=[
         {
-            name : playerOne,
-            player : 1,
-        },
+            name: "player 1",
+            playerID: 1,
+        }, 
         {
-            name: playerTwo,
-            player: 2,
+            name: "player 2",
+            playerID: 2,
         }
     ]
 
-    let currentPlayer=players[0];
+    let currentPlayer=playerList[0];
 
     const swapPlayer= () =>{
-        currentPlayer=(currentPlayer === players[0]) ?
-        (players[1]) : (players[0]);
+        currentPlayer = (currentPlayer === playerList[0]) ?
+        (playerList[1]) : (playerList[0]);
     }
 
-    
-    
-    
-} 
+    let moveRow=1, moveCol=2;
 
-const play=GameBoard();
-play.getBoard();
+    board.markMove("x", currentPlayer, moveRow, moveCol);
+    board.printBoard();
+    console.log(board.checkWin(currentPlayer));
+    swapPlayer();
+    board.markMove("o", currentPlayer, 0, 0);
+    board.printBoard();
+    console.log(board.checkWin(currentPlayer));
+    swapPlayer();
+    board.markMove("x", currentPlayer, 0, 2);
+    board.printBoard();
+    console.log(board.checkWin(currentPlayer));
+    swapPlayer();
+    board.markMove("o", currentPlayer, 2, 0);
+    board.printBoard();
+    console.log(board.checkWin(currentPlayer));
+    swapPlayer();
+    board.markMove("x", currentPlayer, 2, 2);
+    board.printBoard();
+    console.log(board.checkWin(currentPlayer));
+    swapPlayer();
+    
+    
+    
+}
+
+const game=GameController();
