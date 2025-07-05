@@ -12,20 +12,24 @@
             }
         }
 
-        const getBoard= () => (board);
+        const getBoard= () => (board);  //encapsulate board itself
 
         const printBoard= () => {
             console.log(board);
         }
 
         const markMove= (symbol, playerID, moveRow, moveCol) => {
-            //let's just work on controller first
+            //to mark move on the board itself
+            //0 means invalid move, 1 means valid
             const position=board[moveRow][moveCol];
             if(position.getSymbol() != " "){
                 console.log("Invalid move, already occupied");
-                return;
+                printBoard();
+                return false;   
             }
+            //if valid move, use setMove to edit the cell's properties
             position.setMove(symbol, playerID);
+            return true;
         };
 
         //here, 0- unfinished, 1- p1, 2- p2, -1 means tied. 
@@ -73,7 +77,7 @@
             ){
                 winner= currentPlayer;
             }
-
+            //all of these were wincons before this
             //checking for tie
             if(roundNo>=9){
                 winner= {
@@ -107,7 +111,7 @@
         const board= GameBoard();
         const maxRounds= 9;
 
-        const playerList=[
+        const playerList=[      //only 2 players, so i'm using array rn
             {
                 name: "player 1",
                 playerID: 1,
@@ -118,14 +122,14 @@
             }
         ]
 
-        let currentPlayer=playerList[0];
+        let currentPlayer=playerList[0];    //p1 by default
 
         const swapPlayer= () =>{
             currentPlayer = (currentPlayer === playerList[0]) ?
             (playerList[1]) : (playerList[0]);
         }
 
-
+        // dummy testing data
         // board.markMove("x", currentPlayer, 1, 2);
         // console.log(board.checkWin(currentPlayer));
         // swapPlayer();
@@ -146,7 +150,7 @@
         // console.log(board.checkWin(currentPlayer));
         // swapPlayer();
 
-        const trackRounds= (function (){
+        const trackRounds= function (){
 
             let currentWinner= board.checkWin(currentPlayer);
             let roundNo= 1;
@@ -158,7 +162,10 @@
 
                 let currentSymbol= currentPlayer.playerID === 1 ? "o" : "x";
 
-                board.markMove(currentSymbol, currentPlayer, moveRow, moveCol);
+                let validity= board.markMove(currentSymbol, currentPlayer, moveRow, moveCol);
+                if(!validity) continue;
+                //for invalid move
+
                 currentWinner= board.checkWin(currentPlayer, roundNo);
                 
                 console.log(currentWinner);
@@ -168,13 +175,22 @@
 
             console.log(currentWinner.playerID);
 
-        })();
+        };
 
-        return {currentPlayer, swapPlayer};   
+        return {currentPlayer, trackRounds, swapPlayer};   
     }
 
     function DisplayController(){
+        const gameContainer= document.querySelector(".game-container");
+        const cell= document.querySelectorAll(".cell");
+        const board= GameBoard();
+        const gamePlay= GameController();
 
+        const makeBoard= () => {
+            board.getBoard().forEach((box) => {
+                
+            });
+        }
     }
 
     const game=GameController();

@@ -1,0 +1,13 @@
+.game-container{
+    width: 15em;
+    height: 15em;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    border: 2px solid black;
+}
+
+.cell{
+    border: 2px solid lightblue;
+    background-color: blueviolet;
+}
