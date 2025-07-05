@@ -107,8 +107,7 @@
         return {playerID, getSymbol, setMove};
     }
 
-    function GameController(){
-        const board= GameBoard();
+    function GameController(board){
         const maxRounds= 9;
 
         const playerList=[      //only 2 players, so i'm using array rn
@@ -150,47 +149,68 @@
         // console.log(board.checkWin(currentPlayer));
         // swapPlayer();
 
-        const trackRounds= function (){
+        //removed trackrounds() and the loop in it, as we're using clicks to check wincons, not loop.
 
-            let currentWinner= board.checkWin(currentPlayer);
-            let roundNo= 1;
-
-            while(currentWinner.playerID === 0)
-            {
-                let moveRow= Number(prompt("Enter number")),
-                moveCol= Number(prompt("Enter number"));
-
-                let currentSymbol= currentPlayer.playerID === 1 ? "o" : "x";
-
-                let validity= board.markMove(currentSymbol, currentPlayer, moveRow, moveCol);
-                if(!validity) continue;
-                //for invalid move
-
-                currentWinner= board.checkWin(currentPlayer, roundNo);
-                
-                console.log(currentWinner);
-                roundNo++;
-                swapPlayer();
-            }
-
-            console.log(currentWinner.playerID);
-
-        };
-
-        return {currentPlayer, trackRounds, swapPlayer};   
+        return {playerList, currentPlayer, swapPlayer};   
     }
 
     function DisplayController(){
         const gameContainer= document.querySelector(".game-container");
-        const cell= document.querySelectorAll(".cell");
         const board= GameBoard();
-        const gamePlay= GameController();
+        const gamePlay= GameController(board);
+        const n=3;
+        
 
-        const makeBoard= () => {
-            board.getBoard().forEach((box) => {
-                
-            });
+        const displayBoard= () => {
+            for(let i=0; i<n; i++)
+            {
+                for(let j=0; j<n; j++)
+                {
+                    let cell= document.createElement("div");
+                    cell.classList.add("cell");
+                    cell.setAttribute("data-row", i);
+                    cell.setAttribute("data-col", j);
+
+                    cell.addEventListener("click", () => {  //handle clicks
+
+                        const row= cell.getAttribute("data-row");   //for coordinates
+                        const col= cell.getAttribute("data-col");
+
+                        let currentPlayer=gamePlay.currentPlayer;   //brought logic from trackRounds() here
+                        let currentSymbol= currentPlayer.playerID === 1 ? "o" : "x";
+
+                        let valid= board.markMove(currentSymbol, currentPlayer, row, col);
+                        if(!valid) return;
+
+                        cell.textContent=currentSymbol;     //edit on ui
+
+                        let roundNo=1;
+                        let currentWinner= board.checkWin(currentPlayer, roundNo);
+                        if(currentWinner === 0){    //each cell has this condition so no need for while loop
+                            roundNo++;
+                            gamePlay.swapPlayer();
+                        }
+                        else if(currentWinner === -1){
+                            console.log("game tied");
+                        }
+                        else{
+                            console.log(`Player ${currentWinner} wins!`);
+                        }
+                        
+
+                        //testing
+                        console.log(`Row no- ${row}, Col no- ${col} by Player ${currentPlayer.playerID}`);
+                    })
+
+                    gameContainer.appendChild(cell);
+                }
+            }
         }
+        displayBoard();
+        
+        
+        
     }
 
-    const game=GameController();
+    // const game=GameController();
+    const display=DisplayController();
