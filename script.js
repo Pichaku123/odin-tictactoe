@@ -2,13 +2,16 @@
     function GameBoard(){
         let board=[];
         const n=3;
+        const status= document.querySelector(".status");
+
+        //NOTE- moving to a DOM approach instead of using Cell() object, so updated most of the methods here
+
         for(let i=0; i<n; i++)
         {
             board[i]=[];
             for(let j=0; j<n; j++)
             {
-                board[i].push(Cell());  //pushes cell() object in each cell
-                //each cell has its own symbol and playerID now.
+                board[i].push(" ");  //pushes empty string in each cell
             }
         }
 
@@ -18,34 +21,38 @@
             console.log(board);
         }
 
-        const markMove= (symbol, playerID, moveRow, moveCol) => {
+        const markMove= (symbol, moveRow, moveCol) => {
             //to mark move on the board itself
             //0 means invalid move, 1 means valid
-            const position=board[moveRow][moveCol];
-            if(position.getSymbol() != " "){
+            
+            if(board[moveRow][moveCol] !== " "){
+                status.textContent="Invalid move, already occupied";
                 console.log("Invalid move, already occupied");
-                printBoard();
                 return false;   
             }
             //if valid move, use setMove to edit the cell's properties
-            position.setMove(symbol, playerID);
+            board[moveRow][moveCol]= symbol; 
             return true;
         };
 
         //here, 0- unfinished, 1- p1, 2- p2, -1 means tied. 
-        const checkWin= (currentPlayer, roundNo) => {
-            let winner={
+        const endOrNot= (currentSymbol, currentPlayer, roundNo) => {
+            //updated function so that printing of win/lose/tie happens here itself.
+            //made this a boolean function to show whether game is over or not, it also handles printing.
+
+            let winner={    
                 name: "unfinished",
                 playerID: 0,
-            };  //winner is an object
+            };  //winner and currentPlayer are objects
 
             //checking for rows
+            const symbol= currentSymbol;
             for(let row=0; row<n; row++)
             {
                 if(
-                    board[row][0].getSymbol() === board[row][1].getSymbol() &&
-                    board[row][1].getSymbol() === board[row][2].getSymbol() &&
-                    board[row][0].getSymbol() != " "
+                    board[row][0] === symbol &&
+                    board[row][1] === symbol &&
+                    board[row][2] === symbol
                 ){
                     winner= currentPlayer;
                 }
@@ -55,25 +62,25 @@
             for(let col=0; col<n; col++)
             {
                 if(
-                    board[0][col].getSymbol() === board[1][col].getSymbol() &&
-                    board[1][col].getSymbol() === board[2][col].getSymbol() &&
-                    board[0][col].getSymbol() != " "
+                    board[0][col] === symbol &&
+                    board[1][col] === symbol &&
+                    board[2][col] === symbol
                 ){
                     winner= currentPlayer;
                 }
             }
             //checking for diagonals
             if(
-                board[0][0].getSymbol() === board[1][1].getSymbol() && 
-                board[1][1].getSymbol() === board[2][2].getSymbol() && 
-                board[1][1].getSymbol() != " "
+                board[0][0] === symbol && 
+                board[1][1] === symbol && 
+                board[2][2] === symbol
             ){
                 winner= currentPlayer;
             }
             if(
-                board[0][2].getSymbol() === board[1][1].getSymbol() && 
-                board[1][1].getSymbol() === board[2][0].getSymbol() && 
-                board[1][1].getSymbol() != " "
+                board[0][2] === symbol && 
+                board[1][1] === symbol && 
+                board[2][0] === symbol
             ){
                 winner= currentPlayer;
             }
@@ -86,30 +93,28 @@
                 }
             }
 
-            printBoard();
-            return winner;
+            if(winner.playerID === -1) {
+                status.textContent= `Game Tied.`;
+                return true;
+            }
+            else if(winner.playerID === 1) {
+                status.textContent= `Player 1 wins!`;
+                return true;
+            }
+            else if(winner.playerID === 2) {
+                status.textContent= `Player 2 wins!`;
+                return true;
+            }
+            else return false;
+            
         };
 
-        return {getBoard, printBoard, markMove, checkWin};
+        return {getBoard, printBoard, markMove, endOrNot};
     }
 
-    function Cell(){
-        let symbol= " ";
-        let playerID= 0;
-
-        const setMove= (currentSymbol, currentPlayerID) => {
-            symbol= currentSymbol;
-            playerID= currentPlayerID;
-        }
-
-        const getSymbol= () => symbol;
-
-        return {playerID, getSymbol, setMove};
-    }
+    //REMOVED CELL OBJECT CUZ WE'RE MANIPULATING DOM NOW, NOT THE ORIGINAL OBJECT ARRAY
 
     function GameController(board){
-        const maxRounds= 9;
-
         const playerList=[      //only 2 players, so i'm using array rn
             {
                 name: "player 1",
@@ -122,36 +127,16 @@
         ]
 
         let currentPlayer=playerList[0];    //p1 by default
+        const getPlayer = () => currentPlayer;
 
         const swapPlayer= () =>{
             currentPlayer = (currentPlayer === playerList[0]) ?
             (playerList[1]) : (playerList[0]);
         }
 
-        // dummy testing data
-        // board.markMove("x", currentPlayer, 1, 2);
-        // console.log(board.checkWin(currentPlayer));
-        // swapPlayer();
-
-        // board.markMove("o", currentPlayer, 0, 0);
-        // console.log(board.checkWin(currentPlayer));
-        // swapPlayer();
-
-        // board.markMove("x", currentPlayer, 0, 2);
-        // console.log(board.checkWin(currentPlayer));
-        // swapPlayer();
-
-        // board.markMove("o", currentPlayer, 2, 0);
-        // console.log(board.checkWin(currentPlayer));
-        // swapPlayer();
-
-        // board.markMove("x", currentPlayer, 2, 2);
-        // console.log(board.checkWin(currentPlayer));
-        // swapPlayer();
-
         //removed trackrounds() and the loop in it, as we're using clicks to check wincons, not loop.
 
-        return {playerList, currentPlayer, swapPlayer};   
+        return {playerList, getPlayer, swapPlayer};   
     }
 
     function DisplayController(){
@@ -159,7 +144,8 @@
         const board= GameBoard();
         const gamePlay= GameController(board);
         const n=3;
-        
+        let roundNo=1;  //moved outside cuz it doesn't matter which cell its in
+        const status=document.querySelector(".status");
 
         const displayBoard= () => {
             for(let i=0; i<n; i++)
@@ -176,27 +162,29 @@
                         const row= cell.getAttribute("data-row");   //for coordinates
                         const col= cell.getAttribute("data-col");
 
-                        let currentPlayer=gamePlay.currentPlayer;   //brought logic from trackRounds() here
-                        let currentSymbol= currentPlayer.playerID === 1 ? "o" : "x";
+                        let currentPlayer=gamePlay.getPlayer();   //brought logic from trackRounds() here
+                        let currentSymbol;
+                        switch(currentPlayer.playerID)
+                        {
+                            case 1: currentSymbol= "o"; break;
+                            case 2: currentSymbol= "x"; break;
+                            default: currentSymbol= " ";
+                        }
 
-                        let valid= board.markMove(currentSymbol, currentPlayer, row, col);
+                        let valid= board.markMove(currentSymbol, row, col);
                         if(!valid) return;
 
                         cell.textContent=currentSymbol;     //edit on ui
 
-                        let roundNo=1;
-                        let currentWinner= board.checkWin(currentPlayer, roundNo);
-                        if(currentWinner === 0){    //each cell has this condition so no need for while loop
+                        //each cell has this condition so no need for while loop
+                        if(!board.endOrNot(currentSymbol, currentPlayer, roundNo)){    
                             roundNo++;
                             gamePlay.swapPlayer();
+                            //so swap wasn't working cuz when we called gamecontroller, the value of 
+                            //currentplayer was set, so we couldn't change it
+                            //so we can use some other function to getPlayer().
+                            //eg- currentPlayer= {"p1", 1}; so now that value is fixed.
                         }
-                        else if(currentWinner === -1){
-                            console.log("game tied");
-                        }
-                        else{
-                            console.log(`Player ${currentWinner} wins!`);
-                        }
-                        
 
                         //testing
                         console.log(`Row no- ${row}, Col no- ${col} by Player ${currentPlayer.playerID}`);
@@ -212,5 +200,4 @@
         
     }
 
-    // const game=GameController();
     const display=DisplayController();
