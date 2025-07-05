@@ -32,6 +32,7 @@
             }
             //if valid move, use setMove to edit the cell's properties
             board[moveRow][moveCol]= symbol; 
+            status.textContent=" ";
             return true;
         };
 
@@ -146,6 +147,7 @@
         const n=3;
         let roundNo=1;  //moved outside cuz it doesn't matter which cell its in
         const status=document.querySelector(".status");
+        let gameOver=false;   //just to ensure players can't click after its over, thanks chatgpt
 
         const displayBoard= () => {
             for(let i=0; i<n; i++)
@@ -158,6 +160,7 @@
                     cell.setAttribute("data-col", j);
 
                     cell.addEventListener("click", () => {  //handle clicks
+                        if(gameOver) return;
 
                         const row= cell.getAttribute("data-row");   //for coordinates
                         const col= cell.getAttribute("data-col");
@@ -184,6 +187,10 @@
                             //currentplayer was set, so we couldn't change it
                             //so we can use some other function to getPlayer().
                             //eg- currentPlayer= {"p1", 1}; so now that value is fixed.
+                        }
+                        else{
+                            gameOver=true;
+                            return;
                         }
 
                         //testing

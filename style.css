@@ -1,3 +1,7 @@
+#game{
+    border: 2px solid black;
+}
+
 .game-container{
     width: 15em;
     height: 15em;
@@ -10,4 +14,8 @@
 .cell{
     border: 2px solid lightblue;
     background-color: blueviolet;
+}
+
+.status{
+    height: 1em;
 }
