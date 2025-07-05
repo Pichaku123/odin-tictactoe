@@ -87,7 +87,7 @@
             }
             //all of these were wincons before this
             //checking for tie
-            if(roundNo>=9){
+            if(roundNo>=9 && winner.playerID == 0){
                 winner= {
                     name: "tied",
                     playerID: -1,
@@ -174,7 +174,7 @@
                             default: currentSymbol= " ";
                         }
 
-                        let valid= board.markMove(currentSymbol, row, col);
+                        let valid= board.markMove(currentSymbol, +row, +col);
                         if(!valid) return;
 
                         cell.textContent=currentSymbol;     //edit on ui
