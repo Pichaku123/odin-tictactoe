@@ -99,11 +99,11 @@
                 return true;
             }
             else if(winner.playerID === 1) {
-                status.textContent= `Player 1 wins!`;
+                status.textContent= `${currentPlayer.name} wins!`;
                 return true;
             }
             else if(winner.playerID === 2) {
-                status.textContent= `Player 2 wins!`;
+                status.textContent= `${currentPlayer.name} wins!`;
                 return true;
             }
             else return false;
@@ -115,14 +115,14 @@
 
     //REMOVED CELL OBJECT CUZ WE'RE MANIPULATING DOM NOW, NOT THE ORIGINAL OBJECT ARRAY
 
-    function GameController(board){
+    function GameController(name1, name2){
         const playerList=[      //only 2 players, so i'm using array rn
             {
-                name: "player 1",
+                name: name1 || "player 1",
                 playerID: 1,
             }, 
             {
-                name: "player 2",
+                name: name2 || "player 2",
                 playerID: 2,
             }
         ]
@@ -137,17 +137,34 @@
 
         //removed trackrounds() and the loop in it, as we're using clicks to check wincons, not loop.
 
-        return {playerList, getPlayer, swapPlayer};   
+        return {getPlayer, swapPlayer};   
     }
 
     function DisplayController(){
         const gameContainer= document.querySelector(".game-container");
         const board= GameBoard();
-        const gamePlay= GameController(board);
+        //moving gamePlay() to start button.
         const n=3;
         let roundNo=1;  //moved outside cuz it doesn't matter which cell its in
         const status=document.querySelector(".status");
         let gameOver=false;   //just to ensure players can't click after its over, thanks chatgpt
+        let gameStart=false;
+        const start=document.querySelector("#start");
+
+        let gamePlay;
+        //declare but don't initialise gamePlay
+        //so that it's still accessible inside displayBoard and cell
+        //while not being actually usable till we click start
+        
+
+        start.addEventListener("click", () => {
+            let name1=document.querySelector("#player-1").value;
+            let name2=document.querySelector("#player-2").value;
+            gamePlay= GameController(name1, name2);
+            //acutal definition of gamePlay here
+            //so gamecontroller isn't called without clicking start.
+            gameStart=true;
+        });
 
         const displayBoard= () => {
             for(let i=0; i<n; i++)
@@ -160,7 +177,7 @@
                     cell.setAttribute("data-col", j);
 
                     cell.addEventListener("click", () => {  //handle clicks
-                        if(gameOver) return;
+                        if(!gameStart || gameOver) return;
 
                         const row= cell.getAttribute("data-row");   //for coordinates
                         const col= cell.getAttribute("data-col");
@@ -174,10 +191,12 @@
                             default: currentSymbol= " ";
                         }
 
+                        //mark move on "board" array
                         let valid= board.markMove(currentSymbol, +row, +col);
                         if(!valid) return;
 
-                        cell.textContent=currentSymbol;     //edit on ui
+                        //display on UI as well, helps update DOM and array
+                        cell.textContent=currentSymbol;     
 
                         //each cell has this condition so no need for while loop
                         if(!board.endOrNot(currentSymbol, currentPlayer, roundNo)){    
@@ -194,7 +213,7 @@
                         }
 
                         //testing
-                        console.log(`Row no- ${row}, Col no- ${col} by Player ${currentPlayer.playerID}`);
+                        console.log(`Row no- ${row}, Col no- ${col} by ${currentPlayer.name}`);
                     })
 
                     gameContainer.appendChild(cell);
