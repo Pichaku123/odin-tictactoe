@@ -7,19 +7,37 @@
     <link href="style.css" rel="stylesheet">
 </head>
 <body>
-    <div id="name-ip">
-        <label for="player-1">Player 1's name-</label>
-        <input type="text" id="player-1" maxlength="15">
-        <label for="player-2">Player 2's name-</label>
-        <input type="text" id="player-2" maxlength="15">
-        <button id="start">Start Game</button>
-        <button id="restart">Restart Game</button>
+
+    <div class="header">
+        <h1>Tic-Tac-Toe</h1>
+        <h5>By Pichaku123</h5>
     </div>
-    <div id="game">
-        <div class="status"></div>
-        <div class="game-container">
-        
+
+    <div class="content">
+
+        <div id="interact">
+            <label for="player-1">Player 1's name-</label>
+            <input type="text" id="player-1" maxlength="15">
+
+            
+            <button id="start">Start Game</button>
+            <button id="restart">Reset Board</button>
+            
+
+            <label for="player-2">Player 2's name-</label>
+            <input type="text" id="player-2" maxlength="15">
         </div>
+
+        <div class="status"></div>
+
+        <div id="game">
+            <div class="game-container"></div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <h4>Made by Pichaku123</h4>
     </div>
 
     <script src="script.js"></script>

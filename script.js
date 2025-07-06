@@ -118,11 +118,11 @@
     function GameController(name1, name2){
         const playerList=[      //only 2 players, so i'm using array rn
             {
-                name: name1 || "player 1",
+                name: name1 || "Player 1",
                 playerID: 1,
             }, 
             {
-                name: name2 || "player 2",
+                name: name2 || "Player 2",
                 playerID: 2,
             }
         ]
@@ -136,11 +136,13 @@
         }
 
         //removed trackrounds() and the loop in it, as we're using clicks to check wincons, not loop.
-
-        return {getPlayer, swapPlayer};   
+        const resetPlayer= () => {
+            currentPlayer=playerList[0];
+        }
+        return {getPlayer, swapPlayer, resetPlayer};   
     }
 
-    function DisplayController(){
+    (function DisplayController(){
         const gameContainer= document.querySelector(".game-container");
         const board= GameBoard();
         //moving gamePlay() to start button.
@@ -148,22 +150,48 @@
         let roundNo=1;  //moved outside cuz it doesn't matter which cell its in
         const status=document.querySelector(".status");
         let gameOver=false;   //just to ensure players can't click after its over, thanks chatgpt
+
         let gameStart=false;
         const start=document.querySelector("#start");
 
+        const restart=document.querySelector("#restart");
         let gamePlay;
         //declare but don't initialise gamePlay
-        //so that it's still accessible inside displayBoard and cell
-        //while not being actually usable till we click start
+        //so that it's still accessible inside displayBoard and cell while not being actually usable till we click start
         
 
         start.addEventListener("click", () => {
+
             let name1=document.querySelector("#player-1").value;
             let name2=document.querySelector("#player-2").value;
             gamePlay= GameController(name1, name2);
             //acutal definition of gamePlay here
             //so gamecontroller isn't called without clicking start.
             gameStart=true;
+
+        });
+
+        restart.addEventListener("click", () => {
+
+            for(let i=0; i<n; i++)
+            {
+                for(let j=0; j<n; j++)
+                {
+                    board.getBoard()[i][j]=" ";  //pushes empty string in each cell
+                }
+            }
+            
+            const cells=document.querySelectorAll(".cell"); //reset cell content
+            cells.forEach(cell => {
+                cell.textContent= " ";
+            })
+
+            roundNo=1;
+            gameStart=false; gameOver=false;
+            
+            gamePlay.resetPlayer(); //changes current player to 
+            
+            status.textContent=" ";
         });
 
         const displayBoard= () => {
@@ -224,6 +252,5 @@
         
         
         
-    }
+    })();
 
-    const display=DisplayController();

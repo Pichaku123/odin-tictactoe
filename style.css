@@ -1,22 +1,109 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    height: 95vh;
+    display: grid;
+    grid-template-rows: 1fr 6fr 1fr;
+    background-color: #B7B1F2;
+}
+
+.header{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.6rem;
+    padding: 1.2rem;
+}
+
+.content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #FFDCCC;
+    border: 5px solid rgba(0, 0, 0, 0.2);
+}
+
+#interact{
+    align-self: stretch;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem;
+    background-color: #FDB7EA;
+    border-bottom: 5px solid rgba(0, 0, 0, 0.2);
+}
+
+
+
+#interact label{
+    font-size: 1.2rem;
+}
+
+#interact button{
+    padding: 0.4rem 1rem;
+    font-size: 1.2rem;
+    border-radius: 0.4rem;
+    color: 	#333333;
+    background-color: #B8F2E6;
+}
+
+#interact input{
+    height: 2rem;
+    padding-left: 1rem;
+    border-radius: 0.8rem;
+}
+
 #game{
-    border: 2px solid black;
+    align-self: stretch;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content .status{
+    background-color: #FFDCCC;
+    height: 3rem;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1rem;
+    
 }
 
 .game-container{
-    width: 15em;
-    height: 15em;
+    width: 25vw;
+    height: 25vw;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    border: 2px solid black;
+    margin-bottom: 2rem;
 }
 
 .cell{
-    border: 2px solid lightblue;
-    background-color: blueviolet;
-    font-size: 2em;
+    border: 2px solid black;
+    background-color: #FBF3B9;
+    font-size: 6rem;
+    text-align: center;
 }
 
 .status{
     height: 1em;
+    font-style: italic;
+}
+
+.footer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
 }
