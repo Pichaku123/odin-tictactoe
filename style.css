@@ -105,5 +105,6 @@ body{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 1.5rem;
+    padding-top: 0.4rem;
+    font-size: 1.2rem;
 }
